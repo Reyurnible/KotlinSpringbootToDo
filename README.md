@@ -23,3 +23,8 @@ $gradle bootRun
 ```
 
 access to `http://localhost:8080/`
+
+## Resources
+
+- https://speakerdeck.com/orekyuu/springboot-plus-kotlin-ju-de-bihuoahuta
+- http://qiita.com/toruuetani/items/290d22a42c33c73831da
