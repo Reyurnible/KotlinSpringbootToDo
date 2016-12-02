@@ -6,15 +6,29 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 
 /**
- * Created by shunhosaka on 2016/10/11.
+ * Controller
  */
 @Controller
 @EnableAutoConfiguration
 open class MainController {
+    companion object {
+        object Prefix {
+            const val WEB = ""
+            const val API = "/api/v1"
+        }
+    }
 
-    @RequestMapping("/")
+    // WEB
+    @RequestMapping("${Prefix.WEB}/")
     @ResponseBody
     open fun home(): String =
             "Hello, Spring Boot Sample Application!"
+
+    // API
+    @RequestMapping("${Prefix.API}/todos")
+    @ResponseBody
+    open fun todos(): String =
+            "Hello, Spring Boot Sample Application!"
+
 
 }
