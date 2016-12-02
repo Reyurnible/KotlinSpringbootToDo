@@ -3,6 +3,7 @@ package io.hosshan
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -20,13 +21,13 @@ class MainController {
     }
 
     // WEB
-    @RequestMapping("${Prefix.WEB}/")
+    @RequestMapping(value = "${Prefix.WEB}/", method = arrayOf(RequestMethod.GET))
     @ResponseBody
-    fun home(): String =
+    fun index(): String =
             "Hello, Spring Boot Sample Application!"
 
     // API
-    @RequestMapping("${Prefix.API}/todos")
+    @RequestMapping(value = "${Prefix.API}/todos", method = arrayOf(RequestMethod.GET))
     @ResponseBody
     fun todos(): String =
             "Hello, Spring Boot Sample Application!"
