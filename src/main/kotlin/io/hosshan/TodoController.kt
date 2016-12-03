@@ -1,4 +1,4 @@
-package io.hosshan
+package io.hosshan.controllers
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.stereotype.Controller
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @EnableAutoConfiguration
-class MainController {
+class TodoController {
     companion object {
         object Prefix {
             const val WEB = ""

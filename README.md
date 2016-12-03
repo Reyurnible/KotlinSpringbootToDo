@@ -13,6 +13,7 @@ http://start.spring.io/
 ## Build
 
 ```
+# Gradle Palette -> Refresh
 // Build
 $gradle build
 // Run project
@@ -28,3 +29,5 @@ access to `http://localhost:8080/`
 
 - https://speakerdeck.com/orekyuu/springboot-plus-kotlin-ju-de-bihuoahuta
 - http://qiita.com/toruuetani/items/290d22a42c33c73831da
+- http://kissybnts.hatenablog.com/entry/2016/03/29/002331
+- https://spring.io/guides/gs/accessing-data-jpa/
