@@ -1,36 +1,54 @@
 package io.hosshan.controllers
 
+import io.hosshan.models.ErrorResponse
+import io.hosshan.models.Todo
+import io.hosshan.models.TodoRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 /**
- * Controller
+ * Rest Controller
  */
 @RestController
 @EnableAutoConfiguration
+@RequestMapping("/api/v1/todos")
 class TodoController {
-    companion object {
-        object Prefix {
-            const val WEB = ""
-            const val API = "/api/v1"
-        }
+
+    @Autowired
+    lateinit var todoRepository: TodoRepository
+
+    @RequestMapping(method = arrayOf(RequestMethod.GET))
+    @ResponseBody
+    fun todos(): List<Todo> =
+            todoRepository.findAll().toList()
+
+    @RequestMapping(method = arrayOf(RequestMethod.POST))
+    @ResponseBody
+    fun addTodo(@RequestBody params: Todo): Todo {
+        params.checkValid()
+        return todoRepository.save(Todo(
+                id = 0,
+                title = params.title,
+                body = params.body,
+                isDone = params.isDone
+        ))
     }
 
-    // WEB
-    @RequestMapping(value = "${Prefix.WEB}/", method = arrayOf(RequestMethod.GET))
-    @ResponseBody
-    fun index(): String =
-            "Hello, Spring Boot Sample Application!"
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleException(exception: IllegalArgumentException): ResponseEntity<ErrorResponse> =
+            ResponseEntity<ErrorResponse>(
+                    ErrorResponse(exception.message ?: ""),
+                    HttpStatus.BAD_REQUEST
+            )
 
-    // API
-    @RequestMapping(value = "${Prefix.API}/todos", method = arrayOf(RequestMethod.GET))
-    @ResponseBody
-    fun todos(): String =
-            "Hello, Spring Boot Sample Application!"
-
+    // Validation function
+    fun Todo.checkValid() {
+        if (title.isBlank()) {
+            throw IllegalArgumentException("Title is not be blank.")
+        }
+    }
 
 }
