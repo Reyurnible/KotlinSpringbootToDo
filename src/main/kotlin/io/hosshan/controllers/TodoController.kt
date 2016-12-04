@@ -26,16 +26,20 @@ class TodoController {
     fun index(): List<Todo> =
             todoRepository.findAll().toList()
 
-    @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.GET))
+    @RequestMapping(value = "/{id}", method = arrayOf(RequestMethod.GET))
     @ResponseBody
     fun details(@PathVariable("id") id: Long): Todo =
-            todoRepository.findOne(id) ?: kotlin.run {
+            if (todoRepository.exists(id)) {
+                todoRepository.findOne(id)
+            } else {
+                null
+            } ?: kotlin.run {
                 throw NotFoundException("Todo(${id}) not found.")
             }
 
     @RequestMapping(method = arrayOf(RequestMethod.POST))
     @ResponseBody
-    fun addTodo(@RequestBody params: Todo): Todo {
+    fun create(@RequestBody params: Todo): Todo {
         params.checkValid()
         return todoRepository.save(Todo(
                 id = 0,
@@ -44,6 +48,30 @@ class TodoController {
                 isDone = params.isDone
         ))
     }
+
+    @RequestMapping(value = "/{id}", method = arrayOf(RequestMethod.PATCH))
+    @ResponseBody
+    fun update(@PathVariable("id") id: Long, @RequestBody params: Todo): Todo =
+            details(id).apply {
+                if (params.title.isBlank().not()) {
+                    title = params.title
+                }
+                params.body?.let {
+                    body = params.body
+                }
+                if (isDone != params.isDone) {
+                    isDone = params.isDone
+                }
+            }.let {
+                todoRepository.save(it)
+            }
+
+    @RequestMapping(value = "/{id}", method = arrayOf(RequestMethod.DELETE))
+    @ResponseBody
+    fun delete(@PathVariable("id") id: Long) {
+        details(id).let { todoRepository.delete(it) }
+    }
+
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleException(exception: IllegalArgumentException): ResponseEntity<ErrorResponse> =

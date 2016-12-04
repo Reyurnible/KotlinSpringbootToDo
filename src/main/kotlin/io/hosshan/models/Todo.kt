@@ -18,7 +18,7 @@ class Todo(
         @Column(nullable = true)
         var body: String?,
         @Column(name = "is_done")
-        val isDone: Boolean? = false
+        var isDone: Boolean? = false
 ) : Serializable {
     constructor() : this(0, "", null)
 
