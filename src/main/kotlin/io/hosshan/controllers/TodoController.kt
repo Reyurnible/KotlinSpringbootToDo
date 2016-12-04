@@ -3,6 +3,7 @@ package io.hosshan.controllers
 import io.hosshan.models.ErrorResponse
 import io.hosshan.models.Todo
 import io.hosshan.models.TodoRepository
+import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
@@ -22,8 +23,15 @@ class TodoController {
 
     @RequestMapping(method = arrayOf(RequestMethod.GET))
     @ResponseBody
-    fun todos(): List<Todo> =
+    fun index(): List<Todo> =
             todoRepository.findAll().toList()
+
+    @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.GET))
+    @ResponseBody
+    fun details(@PathVariable("id") id: Long): Todo =
+            todoRepository.findOne(id) ?: kotlin.run {
+                throw NotFoundException("Todo(${id}) not found.")
+            }
 
     @RequestMapping(method = arrayOf(RequestMethod.POST))
     @ResponseBody
@@ -43,6 +51,14 @@ class TodoController {
                     ErrorResponse(exception.message ?: ""),
                     HttpStatus.BAD_REQUEST
             )
+
+    @ExceptionHandler(NotFoundException::class)
+    fun handleException(exception: NotFoundException): ResponseEntity<ErrorResponse> =
+            ResponseEntity<ErrorResponse>(
+                    ErrorResponse(exception.message ?: ""),
+                    HttpStatus.NOT_FOUND
+            )
+
 
     // Validation function
     fun Todo.checkValid() {
